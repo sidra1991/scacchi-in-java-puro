@@ -3,7 +3,6 @@ public class Chessboard {
     private Scacchiera scacchiera;
     private Square[][] table = new Square[9][9];
     public String[] orizontalLocation = {" ","A","B","C","D","E","F","G","H"};
-    private String lastMove;
 
     public Chessboard(Scacchiera scacchiera){
         this.scacchiera = scacchiera;
@@ -92,8 +91,12 @@ public class Chessboard {
         return orizontalLocation;
     }
 
-    public void setlastMove(String last){
-        this.lastMove = last;
+    public String getOrizontalLocationLetter(int num){
+        return orizontalLocation[num];
+    }
+
+    public String getlastMove(){
+       return scacchiera.lastMove;
     }
 
 

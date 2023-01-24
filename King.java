@@ -12,7 +12,7 @@ public class King extends Piece{
     }
     
     @Override
-    List<String> movementPossibility(Square[][] table) {
+    List<String> movementPossibility() {
 
 
         List<String> possibility=new ArrayList<String>();
@@ -32,18 +32,23 @@ public class King extends Piece{
         int[] positionDirection = {0,+1,-1};
         
 
+        //regular move
         for (int i = 0; i < positionDirection.length; i++) {
             for (int j = 0; j < positionDirection.length; j++) {
 
-                if (vertical + positionDirection[i] < 9 && 
-                    orizzontalInt + positionDirection[j] < 9 &&
-                    vertical + positionDirection[i] > 9 && 
-                    orizzontalInt + positionDirection[j] > 9 ) 
+                int var1 = vertical + positionDirection[i];
+                int var2 = orizzontalInt + positionDirection[j];
+                String letter = chessboard.getOrizontalLocationLetter(var2);
+
+                if (var1 < 9 && 
+                    var2 < 9 &&
+                    var1 > 9 && 
+                    var2 > 9 ) 
                     {
-                        Square squ = table[vertical + positionDirection[i]][orizzontalInt + positionDirection[j]];
+                        Square squ = chessboard.SearcSquare(var1+letter);
                         if (squ.getPointerEnemy(color) == 0 ) {
                             if (!squ.pieceEsist() || squ.getPiece().color != this.color) {
-                            possibility.add((vertical + positionDirection[i]) + orizontalLocation[orizzontalInt + positionDirection[j]]);
+                            possibility.add(var1 + letter);
                         }
                     }
                 } 
@@ -52,19 +57,20 @@ public class King extends Piece{
 
 
         if(this.movement == 0){
-           String[] castling =  castlingPossibility(table);
+           String[] castling =  castlingPossibility();
 
            if (!castling[0].equals("")) {
                 possibility.add(castling[0]);
            }
 
            if (!castling[1].equals("")) {
-                possibility.add(castling[0]);
+                possibility.add(castling[1]);
             }
         }
 
         return possibility; 
     }
+
 
     /*
      * function name castlingPossibility()
@@ -77,7 +83,8 @@ public class King extends Piece{
      * 
      */
 
-    public String[] castlingPossibility(Square[][] table){
+    public String[] castlingPossibility(){
+        Square[][] table = chessboard.getSquares();
         String[] possibility = {"",""};
 
         if (!tower1.getIposition().equals("") && tower1.getMovement() == 0 ) {
@@ -118,7 +125,7 @@ public class King extends Piece{
                     SearcSquare("8G", table).getPointerEnemy(color) == 0 &&
                     !SearcSquare("8G", table).pieceEsist()) 
                 {
-                    possibility[0] = "RC"; 
+                    possibility[1] = "RC"; 
                 }
 
             } else {
@@ -128,12 +135,12 @@ public class King extends Piece{
                     SearcSquare("1G", table).getPointerEnemy(color) == 0 &&
                     !SearcSquare("1G", table).pieceEsist()) 
                 {
-                    possibility[0] = "RC"; 
+                    possibility[1] = "RC"; 
                 }
 
             }
         }
-
+        
         return possibility;
     }
 
@@ -143,14 +150,14 @@ public class King extends Piece{
         if (mov.equals("LC")) {
             if (color) {
                 tower1.move(scacchiera, list, "8D");
-                scacchiera.SearcSquare("8C").insertElement( scacchiera.SearcSquare(position).getPiece());
-                scacchiera.SearcSquare(position).deletElement();
+                chessboard.SearcSquare("8C").insertElement( chessboard.SearcSquare(position).getPiece());
+                chessboard.SearcSquare(position).deletElement();
                 this.position = "8C";
 
             } else {
                 tower1.move(scacchiera, list, "1D");
-                scacchiera.SearcSquare("1C").insertElement( scacchiera.SearcSquare(position).getPiece());
-                scacchiera.SearcSquare(position).deletElement();
+                chessboard.SearcSquare("1C").insertElement( chessboard.SearcSquare(position).getPiece());
+                chessboard.SearcSquare(position).deletElement();
                 this.position = "1C";
             }
             
@@ -158,30 +165,30 @@ public class King extends Piece{
 
             if (color) {
                 tower2.move(scacchiera, list, "8F");
-                scacchiera.SearcSquare("8G").insertElement( scacchiera.SearcSquare(position).getPiece());
-                scacchiera.SearcSquare(position).deletElement();
+                chessboard.SearcSquare("8G").insertElement( chessboard.SearcSquare(position).getPiece());
+                chessboard.SearcSquare(position).deletElement();
                 this.position = "8G";
             }else{
                 tower2.move(scacchiera, list, "1F");
-                scacchiera.SearcSquare("1G").insertElement( scacchiera.SearcSquare(position).getPiece());
-                scacchiera.SearcSquare(position).deletElement();
+                chessboard.SearcSquare("1G").insertElement( chessboard.SearcSquare(position).getPiece());
+                chessboard.SearcSquare(position).deletElement();
                 this.position = "1G";
             }
 
 
         }else {
             if( list.contains(mov) ){
-                Square movControl = scacchiera.SearcSquare(mov);
+                Square movControl = chessboard.SearcSquare(mov);
 
             if (movControl.pieceEsist()) {
                 movControl.getPiece().removePosition();
                 scacchiera.deletePieceInList(movControl.getPiece());
             }
 
-            scacchiera.SearcSquare(mov).insertElement( scacchiera.SearcSquare(position).getPiece());
-            scacchiera.SearcSquare(position).deletElement();
+            chessboard.SearcSquare(mov).insertElement( chessboard.SearcSquare(position).getPiece());
+            chessboard.SearcSquare(position).deletElement();
             this.position = mov;
-            movementPossibility( scacchiera.returnTable());
+            movementPossibility();
         }
         
         
@@ -194,7 +201,7 @@ public class King extends Piece{
     public List<String> CheckMate(Square[][] table){
         List<String> saveKing = new ArrayList<>();
 
-        movementPossibility(table).forEach(el -> saveKing.add(el));
+        movementPossibility().forEach(el -> saveKing.add(el));
 
         return saveKing;
     }

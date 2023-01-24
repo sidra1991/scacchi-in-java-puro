@@ -47,7 +47,11 @@ public abstract class Piece {
      * 1. if the movement in string form is among the permitted ones, it proceeds with the movement. else is a error
      * 2. control square if this have a piece, remove piece and add new piece
      */
-    public void move(Scacchiera scacchiera,List<String> list,String mov){;
+    public void move(Scacchiera scacchiera,List<String> list,String mov){
+        if (mov.equals("GHOST-RIGHT")|| mov.equals("GHOST-LEFT")) {
+            ghost(mov);
+        }
+
         if( list.contains(mov) ){
             Square movControl = chessboard.SearcSquare(mov);
             if (movControl.pieceEsist()) {
@@ -60,7 +64,7 @@ public abstract class Piece {
             chessboard.SearcSquare(mov).insertElement( chessboard.SearcSquare(position).getPiece());
             chessboard.SearcSquare(position).deletElement();
             this.position = mov;
-            movementPossibility( chessboard.getSquares());
+            movementPossibility();
             scacchiera.lastMove = mov;
         }else{
             System.out.println("fail... ");
@@ -70,19 +74,22 @@ public abstract class Piece {
         
     }
 
-    public List<String> checkPosibily(Square[][] table, List<String> heros ){
-        List<String> movKingSave = List.copyOf(movementPossibility(table));
-        movKingSave.addAll(movKingSave);
+    public List<String> checkPosibily(List<String> heros ){
+       
+        List<String> movKingSave = List.copyOf(movementPossibility());
+         if(heros != null){
+           movKingSave.addAll(heros); 
+        }
 
         return movKingSave;
     }
 
-    public boolean isKing(String last){
+    public boolean isKing(){
         boolean result = this.tipe.equals("king")? true:false;
 
             if (result) {
                 System.out.println("this king is in check " + this.position + " save him" ); 
-                check(last);
+                check(identify);
             }
 
         return result;
@@ -100,8 +107,56 @@ public abstract class Piece {
         return null;
     }
 
+    public void ghost(String direction){
+        String[] posistionArray = position.split(""); 
+        int vertical = Integer.parseInt(posistionArray[0]);
+        String orizzontal = posistionArray[1];
+        int orizzontalInt = 0;
+        String[] letter = chessboard.orizontalLocation;
+        
 
-    abstract List<String> movementPossibility(Square[][] table);
+        for (int i = 0; i < orizontalLocation.length; i++) {
+            if (orizontalLocation[i].equals(orizzontal)) {
+                orizzontalInt = i;
+                break;
+            }
+        }
+
+        if (color) {
+          if (direction.equals("GHOST-RIGHT")) {
+                chessboard.SearcSquare(chessboard.getlastMove()).deletElement();
+                chessboard.SearcSquare(vertical+letter[orizzontalInt+1]).insertElement(chessboard.SearcSquare(position).getPiece());
+                chessboard.SearcSquare(position).deletElement();
+                setPosition((vertical+1)+letter[orizzontalInt+1]); 
+
+            } else if (direction.equals("GHOST-LEFT")){
+                chessboard.SearcSquare(chessboard.getlastMove()).deletElement();
+                chessboard.SearcSquare(vertical+letter[orizzontalInt-1]).insertElement(chessboard.SearcSquare(position).getPiece());
+                chessboard.SearcSquare(position).deletElement();
+                setPosition((vertical+1)+letter[orizzontalInt-1]); 
+            } 
+        }else{
+            if (direction.equals("GHOST-RIGHT")) {
+                chessboard.SearcSquare(chessboard.getlastMove()).deletElement();
+                chessboard.SearcSquare(vertical+letter[orizzontalInt+1]).insertElement(chessboard.SearcSquare(position).getPiece());
+                chessboard.SearcSquare(position).deletElement();
+                setPosition((vertical-1)+letter[orizzontalInt+1]); 
+
+            } else if (direction.equals("GHOST-LEFT")){
+                chessboard.SearcSquare(chessboard.getlastMove()).deletElement();
+                chessboard.SearcSquare(vertical+letter[orizzontalInt-1]).insertElement(chessboard.SearcSquare(position).getPiece());
+                chessboard.SearcSquare(position).deletElement();
+                setPosition((vertical-1)+letter[orizzontalInt-1]); 
+            } 
+        }
+
+
+        
+    }
+    
+
+
+    abstract List<String> movementPossibility();
 
     // getter and setter
 
@@ -110,7 +165,6 @@ public abstract class Piece {
     }
 
     private void check(String last){
-        chessboard.setlastMove(last);
         this.check = !this.check;
     }
 
@@ -128,5 +182,9 @@ public abstract class Piece {
 
     public void setCheck(boolean check) {
         this.check = check;
+    }
+
+    public void setPosition(String position){
+        this.position = position;
     }
 }

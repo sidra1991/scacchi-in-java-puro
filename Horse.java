@@ -9,7 +9,7 @@ public class Horse extends Piece{
 
 
     @Override
-    List<String> movementPossibility(Square[][] table) {
+    List<String> movementPossibility() {
         List<String> possibility=new ArrayList<String>();
 
         String[] posistionArray = position.split(""); 
@@ -23,144 +23,32 @@ public class Horse extends Piece{
                 break;
             }
         }
-
-        if ( (vertical+2)>0
-        && (vertical+2)<9
-        && (orInt+1)>0
-        && (orInt+1)<9 ) 
-        {
-            Square squ = table[vertical + 2][orInt +1];
-            if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
-                if (squ.getPiece().isKing("")) {
-                //    squ.getPiece().check();
-                }
-                possibility.add((vertical +2) + orizontalLocation[orInt+1]);
-
-            }else if(!(squ.pieceEsist())){
-                possibility.add((vertical +2) + orizontalLocation[orInt+1]);
-            }
-            
-        }
         
-        if ( (vertical+1)>0
-        && (vertical+1)<9
-        && (orInt+2)>0
-        && (orInt+2)<9) 
-        {
-            Square squ =table[vertical+1][orInt +2] ;
-            if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
-                if (squ.getPiece().isKing("")) {
-                //    squ.getPiece().check();
-                }
-                possibility.add((vertical +1) + orizontalLocation[orInt+2]);
-
-            }else if(!(squ.pieceEsist())){
-                possibility.add((vertical +1) + orizontalLocation[orInt+2]);
-            }
-        }
-    
-        if( (vertical-1)>0
-        && (vertical-1)<9
-        && (orInt+2)>0
-        && (orInt+2)<9) 
-        {
-            Square squ = table[vertical-1][orInt +2];
-            if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
-                if (squ.getPiece().isKing("")) {
-                //    squ.getPiece().check();
-                }
-                possibility.add((vertical -1) + orizontalLocation[orInt+2]);
-
-            }else if(!(squ.pieceEsist())){
-                possibility.add((vertical -1) + orizontalLocation[(orInt+2)]);
-            }
-        }
-    
-        if( (vertical-2)>0
-        && (vertical-2)<9
-        && (orInt+1)>0
-        && (orInt+1)<9)
-        {
-            Square squ = table[vertical-2][orInt +1];
-            if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
-                if (squ.getPiece().isKing("")) {
-                //    squ.getPiece().check();
-                }
-                possibility.add((vertical -2) + orizontalLocation[orInt+1]);
-
-            }else if(!(squ.pieceEsist())){
-                possibility.add((vertical -2) + orizontalLocation[orInt+1]);
-            }
-        }
-    
-        if( (vertical-2)>0
-        && (vertical-2)<9
-        && (orInt-1)>0
-        && (orInt-1)<9) 
-        {
-            Square squ = table[vertical-2][orInt -1];
-            if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
-                if (squ.getPiece().isKing("")) {
-                //    squ.getPiece().check();
-                }
-                possibility.add((vertical -2) + orizontalLocation[orInt-1]);
-
-            }else if(!(squ.pieceEsist())){
-                possibility.add((vertical -2) + orizontalLocation[orInt-1]);
-            }
-        }
-    
-        if( (vertical-1)>0
-        && (vertical-1)<9
-        && (orInt-2)>0
-        && (orInt-2)<9) 
-        {
-            Square squ = table[vertical-1][orInt -2];
-            
-            if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
-                if (squ.getPiece().isKing("")) {
-                //    squ.getPiece().check();
-                }
-                possibility.add((vertical -1) + orizontalLocation[orInt-2]);
-
-            }else if(!(squ.pieceEsist())){
-                possibility.add((vertical -1) + orizontalLocation[orInt-2]);
-            }
-        }
         
-        if( (vertical+1)>0
-        && (vertical+1)<9
-        && (orInt-2)>0
-        && (orInt-2)<9) 
-        {
-            Square squ = table[vertical+1][orInt -2];
-            if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
-                if (squ.getPiece().isKing("")) {
-                //    squ.getPiece().check();
-                }
-                possibility.add((vertical +1) + orizontalLocation[orInt-2]);
+        int[] arraySupportVertical = {2,1,-1,-2,-2,-1,+1,+2};
+        int[] arraySupportOrizontal = {1,+2,+2,1,-1,-2,-2,-1};
+        
+        
+        for (int i = 0; i < arraySupportOrizontal.length; i++) {
+            int var1 =vertical + arraySupportVertical[i];
+            int var2 =orInt + arraySupportOrizontal[i];
+            String letter = chessboard.getOrizontalLocationLetter(var2);
 
-            }else if(!(squ.pieceEsist())){
-                possibility.add((vertical +1) + orizontalLocation[orInt-2]);
-            }
-        }
-    
-        if( (vertical+2)>0
-        && (vertical+2)<9
-        && (orInt-1)>0
-        && (orInt-1)<9) 
-        {
-            Square squ = table[vertical+2][orInt -1];
-            
-            if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
-                if (squ.getPiece().isKing("")) {
-                //    squ.getPiece().check();
-                }
-                possibility.add((vertical +2) + orizontalLocation[orInt-1]);
+        if ( var1>0&& var1<9&& var2>0&& var2<9 ){
 
-            }else if(!(squ.pieceEsist())){
-                possibility.add((vertical +2) + orizontalLocation[orInt-1]);
+                Square squ = chessboard.SearcSquare(var1+letter);
+                if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
+                    if (squ.getPiece().isKing()) {
+                    //    squ.getPiece().check();
+                    }
+                    possibility.add(var1 + letter);
+
+                }else if(!(squ.pieceEsist())){
+                    possibility.add(var1 + letter);
+                }
+                
             }
+
         }
 
         return possibility;

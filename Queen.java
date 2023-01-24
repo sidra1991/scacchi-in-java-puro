@@ -8,7 +8,7 @@ public class Queen extends Piece{
     }
 
     @Override
-    List<String> movementPossibility(Square[][] table) {
+    List<String> movementPossibility() {
         List<String> possibility=new ArrayList<String>();
 
         String[] posistionArray = position.split(""); 
@@ -38,6 +38,7 @@ public class Queen extends Piece{
         boolean belowLeft =false;
         boolean upLeft = false;
         boolean belowRight =false;
+        
 
         for (int i = 0; i < 9; i++) {
             if (upRight && belowLeft && upLeft && belowRight && up[1] == 0 && below[1] == 0 && left[1] == 0 && right[1] == 0) {

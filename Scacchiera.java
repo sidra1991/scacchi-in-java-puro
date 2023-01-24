@@ -23,25 +23,6 @@ public class Scacchiera {
     public Scacchiera(){
     }
 
-    /*
-    * function name -> controlPointer
-    * @param ()
-    * 
-    * inside the function 
-    * 1. call listPiece white and black and use for add pointer to Square
-    */
-    public void controlPointer(){
-        piecesWhite.forEach(el -> {
-           List<String> pM = el.movementPossibility(chessboard.getSquares());
-           pM.forEach(mov -> chessboard.SearcSquare(mov).addPointer(true));
-        });
-        piecesBlack.forEach(el -> {
-            List<String> pM = el.movementPossibility(chessboard.getSquares());
-            pM.forEach(mov -> chessboard.SearcSquare(mov).addPointer(false));
-         });
-    }
-
-
 
     /*
      * start game: generate al piece and start
@@ -128,8 +109,16 @@ public class Scacchiera {
         this.kingBlack = kB;
         piecesBlack.add(kB);
 
+        piecesWhite.forEach(el -> {
+            List<String> pM = el.movementPossibility(chessboard.getSquares());
+            pM.forEach(mov -> chessboard.SearcSquare(mov).addPointer(true));
+        });
+        piecesBlack.forEach(el -> {
+            List<String> pM = el.movementPossibility(chessboard.getSquares());
+            pM.forEach(mov -> chessboard.SearcSquare(mov).addPointer(false));
+        });
+
         colorTurn = true;
-        controlPointer();
 
         chessboard.printTable();
 
@@ -137,7 +126,9 @@ public class Scacchiera {
     }
     
 
-    //list of piece can move  :TODO----implement controll
+    /*
+     *list of piece can move 
+     */
     public List<String> getListPicesAvaible(Boolean playerColor){
         List<String> text = new ArrayList<String>();
 
@@ -160,15 +151,15 @@ public class Scacchiera {
 
     public boolean finish(){
         if (this.kingBlack.getCheck()) {
-            //if (kingBlack.checkPosibily(getSquares()).size() == 0 ) {
-              //  this.winner = true;
-            //}
+            if (kingBlack.checkPosibily(chessboard.getSquares(), null).size() == 0 ) {
+                this.winner = true;
+            }
         }
 
         if (this.kingWhite.getCheck()) {
-            //if (kingWhite.checkPosibily(getSquares()).size() == 0 ) {
-              //  this.winner = true;
-            //}
+            if (kingWhite.checkPosibily(chessboard.getSquares(),null).size() == 0 ) {
+                this.winner = true;
+            }
         }
         
         

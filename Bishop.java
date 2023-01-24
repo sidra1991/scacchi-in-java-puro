@@ -8,7 +8,7 @@ public class Bishop extends Piece{
     }
 
     @Override
-    List<String> movementPossibility(Square[][] table) {
+    List<String> movementPossibility() {
         List<String> possibility=new ArrayList<String>();
 
         String[] posistionArray = position.split(""); 
@@ -38,7 +38,17 @@ public class Bishop extends Piece{
         boolean upLeft = false;
         boolean belowRight =false;
 
+        String[] upRightDirection = new String[8];
+        String[] belowLeftDirection = new String[8];
+        String[] upLeftDirection = new String[8];
+        String[] belowRightDirection = new String[8];
+
+
         for (int i = 0; i < 9; i++) {
+
+            int var1 = 0;
+            int var2 = 0;
+            Square squ = chessboard.SearcSquare((var1)+chessboard.getOrizontalLocationLetter(var2));
             if (upRight && belowLeft && upLeft && belowRight) {
                 break;
             }
@@ -65,62 +75,74 @@ public class Bishop extends Piece{
 
 
             if (!upRight && vertical + up < 9 && orizzontalInt + right < 9) {
-                if (!table[vertical + up][orizzontalInt+right].pieceEsist()) {
-                    possibility.add((vertical + up) + orizontalLocation[orizzontalInt+right]);
-                }else if(table[vertical + up][orizzontalInt+right].getPiece().color != this.color){
-                    if (table[vertical + up][orizzontalInt+right].getPiece().isKing("")) {
-                       
+                var1 = vertical+up;
+                var2 = orizzontalInt+right;
+                if (!squ.pieceEsist()) {
+                    upLeftDirection[i] = squ.getIdentify(); 
+                    possibility.add((var1) + orizontalLocation[var2]);
+                }else if(squ.getPiece().color != this.color){
+                    if (squ.getPiece().isKing()) {
+                       upLeftDirection[i] = squ.getIdentify(); 
                     }
-                    possibility.add((vertical + up) + orizontalLocation[orizzontalInt+right]);
+                    possibility.add((var1) + orizontalLocation[var2]);
                     upRight = !upRight;
                 }else{
                     upRight = !upRight;
                 }
             } 
 
-            if (!belowRight && vertical - below > 0 && orizzontalInt + right < 9) {
-                if (!table[vertical - below][orizzontalInt + right].pieceEsist()) {
-                    possibility.add((vertical - below) + orizontalLocation[orizzontalInt + right]);
-                }else if(table[vertical - below][orizzontalInt + right].getPiece().color != this.color){
-                    if (table[vertical - below][orizzontalInt+right].getPiece().isKing("")) {
-                    //    table[vertical - below][orizzontalInt+right].getPiece().check();
-                    }
-                    possibility.add((vertical - below) + orizontalLocation[orizzontalInt + right]);
-                    belowRight = !belowRight;
-                }else{
-                    belowRight = !belowRight;
-                }
 
+            if (!belowRight && vertical - below > 0 && orizzontalInt + right < 9) {
+                var1 = vertical-below;
+                var2 = orizzontalInt+right;
+                if (!squ.pieceEsist()) {
+                    upLeftDirection[i] = squ.getIdentify(); 
+                    possibility.add((var1) + orizontalLocation[var2]);
+                }else if(squ.getPiece().color != this.color){
+                    if (squ.getPiece().isKing()) {
+                       upLeftDirection[i] = squ.getIdentify(); 
+                    }
+                    possibility.add((var1) + orizontalLocation[var2]);
+                    upRight = !upRight;
+                }else{
+                    upRight = !upRight;
+                }
             } 
 
             if (!belowLeft && vertical - below > 0 && orizzontalInt + left < 9) {
-                if (!table[vertical - below][orizzontalInt + left].pieceEsist()) {
-                    possibility.add((vertical - below) + orizontalLocation[orizzontalInt + left]);
-                }else if(table[vertical - below][orizzontalInt + left].getPiece().color != this.color){
-                    if (table[vertical - below][orizzontalInt + left].getPiece().isKing("")) {
-                    //    table[vertical - below][orizzontalInt - left].getPiece().check();
+                var1 = vertical-below;
+                var2 = orizzontalInt+left;
+                if (!squ.pieceEsist()) {
+                    upLeftDirection[i] = squ.getIdentify(); 
+                    possibility.add((var1) + orizontalLocation[var2]);
+                }else if(squ.getPiece().color != this.color){
+                    if (squ.getPiece().isKing()) {
+                       upLeftDirection[i] = squ.getIdentify(); 
                     }
-                    possibility.add((vertical - below) + orizontalLocation[orizzontalInt + left]);
-                    belowLeft = !belowLeft;
+                    possibility.add((var1) + orizontalLocation[var2]);
+                    upRight = !upRight;
                 }else{
-                    belowLeft = !belowLeft;
+                    upRight = !upRight;
                 }
-
             } 
 
             if (!upLeft && vertical + up <9 && orizzontalInt + left<9) {
-                if (!table[vertical + up][orizzontalInt + left].pieceEsist()) {
-                    possibility.add((vertical + up) + orizontalLocation[orizzontalInt + left]);
-                }else if(table[vertical + up][orizzontalInt + left].getPiece().color != this.color){
-                    if (table[vertical + up][orizzontalInt + left].getPiece().isKing("")) {
-                     //   table[vertical + up][orizzontalInt - left].getPiece().check();
+                var1 = vertical+up;
+                var2 = orizzontalInt+left;
+                if (!squ.pieceEsist()) {
+                    upLeftDirection[i] = squ.getIdentify(); 
+                    possibility.add((var1) + orizontalLocation[var2]);
+                }else if(squ.getPiece().color != this.color){
+                    if (squ.getPiece().isKing()) {
+                       upLeftDirection[i] = squ.getIdentify(); 
                     }
-                    possibility.add((vertical + up) + orizontalLocation[orizzontalInt + left]);
-                    upLeft = !upLeft;
+                    possibility.add((var1) + orizontalLocation[var2]);
+                    upRight = !upRight;
                 }else{
-                    upLeft = !upLeft;
+                    upRight = !upRight;
                 }
             } 
+
 
             up++;
             below++;

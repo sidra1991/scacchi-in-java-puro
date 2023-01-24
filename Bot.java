@@ -14,10 +14,6 @@ public class Bot extends Player{
     @Override
     public void move() {
 
-        //if (turn % 5 == 0 && !color) {
-            chessboard.printTable();
-        //}
-
         List<String> movePossibility = scacchiera.getListPicesAvaible(this.color);
 
         //the bot select a random on list piece can move
@@ -31,6 +27,10 @@ public class Bot extends Player{
         piece.move(scacchiera,pieceMuve,playerbotMove);
         turn++;
         scacchiera.lastMove = playerbotMove;
+
+         //if (turn % 5 == 0 && !color) {
+            chessboard.printTable();
+        //}
     }
 
     @Override
