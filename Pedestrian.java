@@ -4,13 +4,13 @@ import java.util.List;
 public class Pedestrian extends Piece{
 
 
-    public Pedestrian(boolean color,String position,Chessboard ches){
-        super("pedestrian",color? "PW":"PB",position,color,ches);
+    public Pedestrian(boolean color,String position,Chessboard ches,King king){
+        super("pedestrian",color? "PW":"PB",position,color,ches,king);
     }
 
 
     @Override
-    List<String> movementPossibility() {
+    public List<String> movementPossibility() {
         List<String> possibility=new ArrayList<String>();
 
         String[] posistionArray = position.split(""); 
@@ -18,6 +18,7 @@ public class Pedestrian extends Piece{
         String orizzontal = posistionArray[1];
         int orizzontalInt = 0;
         String[] letter = chessboard.orizontalLocation;
+        List<String> DirectionControl = new ArrayList<String>();
         
 
         for (int i = 0; i < orizontalLocation.length; i++) {
@@ -27,17 +28,19 @@ public class Pedestrian extends Piece{
             }
         }
 
-        if (vertical -1 > 0 && color && chessboard.SearcSquare((vertical-1)+letter[orizzontalInt]).getPiece()==null) {
+        //normal
+        if (color && vertical -1 > 0 && chessboard.SearcSquare((vertical-1)+letter[orizzontalInt]).getPiece()==null) {
             possibility.add((vertical - 1) + orizzontal);
-        }else if(vertical+1 < 9 && chessboard.SearcSquare((vertical+1)+letter[orizzontalInt]).getPiece()==null){
+        }else if(!color&&vertical+1 < 9 && chessboard.SearcSquare((vertical+1)+letter[orizzontalInt]).getPiece()==null){
             possibility.add((vertical + 1) + orizzontal);
         }  
         
+        //doble to start
         if(position.equals(start)){
             //color true = white / false = black
             if (color && chessboard.SearcSquare((vertical-2)+letter[orizzontalInt]).getPiece()==null) {
                 possibility.add((vertical - 2) + orizzontal);
-            }else if(color == false && chessboard.SearcSquare((vertical+2)+letter[orizzontalInt]).getPiece()==null){
+            }else if(!color&&chessboard.SearcSquare((vertical+2)+letter[orizzontalInt]).getPiece()==null){
                 possibility.add((vertical + 2) + orizzontal);
             }
         }
@@ -48,43 +51,82 @@ public class Pedestrian extends Piece{
 
             if (vertical-1>0&&(orizzontalInt+1)<9 &&chessboard.SearcSquare((vertical-1)+letter[orizzontalInt+1]).pieceEsist() && chessboard.SearcSquare((vertical-1)+letter[orizzontalInt+1]).getPiece().getColor() != this.color) {
                 if (chessboard.SearcSquare((vertical-1)+letter[orizzontalInt+1]).getPiece().isKing()) {
-                //    table[vertical - 1][orizzontalInt+1].getPiece().check();
+                    DirectionControl.add(position);
+                    chessboard.SearcSquare((vertical-1)+letter[orizzontalInt+1]).getPiece().saveMov(DirectionControl);
                 }
                 possibility.add((vertical - 1) + orizontalLocation[orizzontalInt +1]);
             }
             
             if(vertical-1 >0&&(orizzontalInt-1)<0 &&chessboard.SearcSquare((vertical-1)+letter[orizzontalInt-1]).pieceEsist() && chessboard.SearcSquare((vertical-1)+letter[orizzontalInt-1]).getPiece().getColor() != this.color){
                 if (chessboard.SearcSquare((vertical-1)+letter[orizzontalInt-1]).getPiece().isKing()) {
-                //    table[vertical - 1][orizzontalInt-1].getPiece().check();
+                    DirectionControl.add(position);
+                    chessboard.SearcSquare((vertical-1)+letter[orizzontalInt-1]).getPiece().saveMov(DirectionControl);
                 }
                 possibility.add((vertical - 1) + orizontalLocation[orizzontalInt -1]);
             }
         }else{
             if(vertical+1 < 9&&orizzontalInt+1 < 9 && chessboard.SearcSquare((vertical+1)+letter[orizzontalInt+1]).pieceEsist() && chessboard.SearcSquare((vertical+1)+letter[orizzontalInt+1]).getPiece().getColor() != this.color){
                 if (chessboard.SearcSquare((vertical+1)+letter[orizzontalInt+1]).getPiece().isKing()) {
-                //    table[vertical + 1][orizzontalInt+1].getPiece().check();
+                    DirectionControl.add(position);
+                    chessboard.SearcSquare((vertical+1)+letter[orizzontalInt+1]).getPiece().saveMov(DirectionControl);
                 }
                 possibility.add((vertical + 1) + orizontalLocation[orizzontalInt +1]);
             }
             
             if(vertical+1 < 9&&(orizzontalInt-1)<0 && chessboard.SearcSquare((vertical+1)+letter[orizzontalInt-1]).pieceEsist() && chessboard.SearcSquare((vertical+1)+letter[orizzontalInt-1]).getPiece().getColor() != this.color){
                 if (chessboard.SearcSquare((vertical+1)+letter[orizzontalInt-1]).getPiece().isKing()) {
-                //    table[vertical + 1][orizzontalInt-1].getPiece().check();
+                    DirectionControl.add(position);
+                    chessboard.SearcSquare((vertical+1)+letter[orizzontalInt-1]).getPiece().saveMov(DirectionControl);
                 }
                 possibility.add((vertical + 1) + orizontalLocation[orizzontalInt -1]);
             }
         }
 
+
+        //ghost possibility
         if (vertical == 4 || vertical == 5) {
-            String var1 = vertical + letter[orizzontalInt + 1];
-            if( chessboard.SearcSquare(chessboard.getlastMove()).equals(chessboard.SearcSquare(var1))&&chessboard.SearcSquare(chessboard.getlastMove()).getPiece().getTipe().equals("pedestrian")&& chessboard.SearcSquare(chessboard.getlastMove()).getPiece().getMovement() == 1){
+            String var1 = "";
+            if (orizzontalInt + 1 < 9) {
+                var1 = vertical + letter[orizzontalInt + 1];
+            }
+            
+            String var2 = "";
+            if (orizzontalInt - 1 > 0) {
+                var2 = vertical + letter[orizzontalInt - 1];
+            }
+            
+            if( orizzontalInt + 1 < 9 && 
+                chessboard.getlastMove().equals(var1)&&
+                chessboard.SearcSquare(var1).getPiece().getTipe().equals("pedestrian")&&
+                chessboard.SearcSquare(var1).getPiece().getMovement() == 1
+            ){;
                 possibility.add("GHOST-RIGHT");
             }
-            String var2 = vertical + letter[orizzontalInt - 1];
-            if( chessboard.SearcSquare(chessboard.getlastMove()).equals(chessboard.SearcSquare(var2))&&chessboard.SearcSquare(chessboard.getlastMove()).getPiece().getTipe().equals("pedestrian")&& chessboard.SearcSquare(chessboard.getlastMove()).getPiece().getMovement() == 1){
+
+            if( orizzontalInt + 1 > 9 &&
+                chessboard.getlastMove().equals(var2)&&
+                chessboard.SearcSquare(var2).getPiece().getTipe().equals("pedestrian")&&
+                chessboard.SearcSquare(var2).getPiece().getMovement() == 1
+                ){
                 possibility.add("GHOST-LEFT");
             }
         }
+
+        return possibility;
+    }
+
+    @Override
+    public List<String> saveKing() {
+        List<String> possibility =new ArrayList<>();
+        List<String> allPoss =  movementPossibility();
+        
+        allPoss.forEach(el-> {
+            if( this.king.getKingPointer()!=null){
+                this.king.getKingPointer().contains(el);
+                possibility.add(el);  
+            }
+            }
+        );
 
         return possibility;
     }

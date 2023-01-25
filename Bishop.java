@@ -2,13 +2,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bishop extends Piece{
-    public Bishop(boolean color,String position,Chessboard ches){
-        super("bishop",color? "BW":"BB",position,color,ches);
+    public Bishop(boolean color,String position,Chessboard ches,King king){
+        super("bishop",color? "BW":"BB",position,color,ches,king);
 
     }
 
     @Override
-    List<String> movementPossibility() {
+    public List<String> movementPossibility() {
         List<String> possibility=new ArrayList<String>();
 
         String[] posistionArray = position.split(""); 
@@ -23,134 +23,127 @@ public class Bishop extends Piece{
             }
         }
 
-        /*
-         * value for control the moove of tower
-         * var[0] is number for the square in table
-         * var[1] is param for true or false 1 is true and the if can run, 0 is false and stop relative if
-         */
-        int up =1;
-        int below =1;
-        int left = 1;
-        int right =1;
-
-        boolean upRight =false;
-        boolean belowLeft =false;
-        boolean upLeft = false;
-        boolean belowRight =false;
-
-        String[] upRightDirection = new String[8];
-        String[] belowLeftDirection = new String[8];
-        String[] upLeftDirection = new String[8];
-        String[] belowRightDirection = new String[8];
+        List<String> DirectionControl = new ArrayList<String>();
 
 
-        for (int i = 0; i < 9; i++) {
+        boolean[] diagonals = {
+            //up - right
+            true,
+            // below - right
+            true,
+            // below -left
+            true,
+            // up - left
+            true
+        };
 
-            int var1 = 0;
-            int var2 = 0;
-            Square squ = chessboard.SearcSquare((var1)+chessboard.getOrizontalLocationLetter(var2));
-            if (upRight && belowLeft && upLeft && belowRight) {
-                break;
+        //for start all session to loop
+        int[][] direction ={
+            {
+                //up -rigt
+                1,1
+            },
+            {
+                //below - right
+                -1,1
+            },
+            {
+                // below -left
+                -1,-1
+            },
+            {
+                // up - left
+                1,-1
             }
+        };
 
-            if (up > 9 || up < 0) {
-                upRight = true;
-                upLeft = true;
-            }
+        for (int i = 0; i < diagonals.length;) {
+            //vertical
+            int var1 = direction[i][0] + vertical;
+            //orizontal
+            int var2 = direction[i][1] +  orizzontalInt ;
 
-            if (below > 9 || below < 0) {
-                belowLeft = true;
-                belowRight = true;
-            }
+            //check if it does not leave the board
+            if (var1 <= 8 &&  var1 >= 1 && var2 >= 1 &&  var2 <= 8) {
+                
+                
 
-            if (left > 9 || left < 0) {
-                belowLeft = true ;
-                upLeft = true;
-            }
-
-            if (right > 9 || right < 0) {
-                upRight=true;
-                belowRight = true;
-            }
-
-
-            if (!upRight && vertical + up < 9 && orizzontalInt + right < 9) {
-                var1 = vertical+up;
-                var2 = orizzontalInt+right;
+                //get the orizonltal position
+                String letter = chessboard.getOrizontalLocationLetter(var2);
+                //get the square
+                Square squ = chessboard.SearcSquare(var1+letter);
+                
+                
                 if (!squ.pieceEsist()) {
-                    upLeftDirection[i] = squ.getIdentify(); 
+                    /*
+                     * if the box is empty the move is legal and is added to the list, it is also added 
+                     * to the direction checklist which will be returned in case it meets the king.
+                     */
+                    DirectionControl.add(squ.getIdentify()); 
                     possibility.add((var1) + orizontalLocation[var2]);
                 }else if(squ.getPiece().color != this.color){
+                    /*
+                     * if it encounters any piece, it interrupts its cycle and checks if the piece 
+                     * is an enemy and if so, adds it to the list of legal moves.
+                     * if it encounters the enemy king, it calls its check method and passes it the direction control array
+                     */
                     if (squ.getPiece().isKing()) {
-                       upLeftDirection[i] = squ.getIdentify(); 
+                        DirectionControl.add(position);
+                        squ.getPiece().saveMov(DirectionControl);
                     }
                     possibility.add((var1) + orizontalLocation[var2]);
-                    upRight = !upRight;
+                    diagonals[i]=false;
                 }else{
-                    upRight = !upRight;
+                    /*
+                     * if the previous cases are not respected, it stops its cycle
+                     */
+                    diagonals[i]=false;
                 }
-            } 
+            }else{
+                diagonals[i]=false;
+            }
+            
+            if (!diagonals[i]) {
+                i++;
+                DirectionControl.clear();
 
 
-            if (!belowRight && vertical - below > 0 && orizzontalInt + right < 9) {
-                var1 = vertical-below;
-                var2 = orizzontalInt+right;
-                if (!squ.pieceEsist()) {
-                    upLeftDirection[i] = squ.getIdentify(); 
-                    possibility.add((var1) + orizontalLocation[var2]);
-                }else if(squ.getPiece().color != this.color){
-                    if (squ.getPiece().isKing()) {
-                       upLeftDirection[i] = squ.getIdentify(); 
-                    }
-                    possibility.add((var1) + orizontalLocation[var2]);
-                    upRight = !upRight;
+            }else{
+                if(var1 > 0){
+                    direction[i][0]+=+1; 
                 }else{
-                    upRight = !upRight;
+                    direction[i][0]+=-1;
                 }
-            } 
 
-            if (!belowLeft && vertical - below > 0 && orizzontalInt + left < 9) {
-                var1 = vertical-below;
-                var2 = orizzontalInt+left;
-                if (!squ.pieceEsist()) {
-                    upLeftDirection[i] = squ.getIdentify(); 
-                    possibility.add((var1) + orizontalLocation[var2]);
-                }else if(squ.getPiece().color != this.color){
-                    if (squ.getPiece().isKing()) {
-                       upLeftDirection[i] = squ.getIdentify(); 
-                    }
-                    possibility.add((var1) + orizontalLocation[var2]);
-                    upRight = !upRight;
+                if(var1 > 0){
+                    direction[i][1]+=+1; 
                 }else{
-                    upRight = !upRight;
+                    direction[i][1]+=-1;
                 }
-            } 
 
-            if (!upLeft && vertical + up <9 && orizzontalInt + left<9) {
-                var1 = vertical+up;
-                var2 = orizzontalInt+left;
-                if (!squ.pieceEsist()) {
-                    upLeftDirection[i] = squ.getIdentify(); 
-                    possibility.add((var1) + orizontalLocation[var2]);
-                }else if(squ.getPiece().color != this.color){
-                    if (squ.getPiece().isKing()) {
-                       upLeftDirection[i] = squ.getIdentify(); 
-                    }
-                    possibility.add((var1) + orizontalLocation[var2]);
-                    upRight = !upRight;
-                }else{
-                    upRight = !upRight;
-                }
-            } 
+            }
 
-
-            up++;
-            below++;
-            left++;
-            right++;
+            
         }
 
+        return possibility;
+    }
 
+
+    @Override
+    public List<String> saveKing() {
+        List<String> possibility =new ArrayList<>();
+        List<String> allPoss =  movementPossibility();
+        
+        allPoss.forEach(el-> {
+                if( this.king.getKingPointer()!=null){
+                    this.king.getKingPointer().contains(el);
+                    possibility.add(el); 
+                    System.out.println(el); 
+                }
+                
+            }
+        );
 
         return possibility;
     }

@@ -1,3 +1,5 @@
+
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Piece {
@@ -10,13 +12,16 @@ public abstract class Piece {
     protected int movement;
     private boolean check;
     protected Chessboard chessboard;
+    protected List<String> kingPointer;
+    protected King king;
 
     public Piece(String identify,String position){
         this.identify = identify;
         this.position = position;
+        
     }
 
-    public Piece(String tipe,String identify,String position,boolean color, Chessboard ches){
+    public Piece(String tipe,String identify,String position,boolean color, Chessboard ches,King king){
         this.tipe = tipe;
         this.identify = identify;
         this.position = position;
@@ -25,19 +30,14 @@ public abstract class Piece {
         this.check = false;
         this.movement = 0;
         this.chessboard = ches;
+        this.king = king;
     }
 
-    public String getIdentify(){
-        return identify;
-    }
+    //metods abstract
+    /*return a list of possibility for save the king */
+    public abstract List<String> saveKing();
+    public abstract List<String> movementPossibility();
 
-    public String getIposition(){
-        return position;
-    }
-
-    public boolean getColor(){
-        return color;
-    }
 
     /*
      * name function move
@@ -57,6 +57,7 @@ public abstract class Piece {
             if (movControl.pieceEsist()) {
                 movControl.getPiece().removePosition();
                 scacchiera.deletePieceInList(movControl.getPiece());
+                this.movement++;
             }
 
             System.out.println(this.position + " in " + mov );
@@ -66,14 +67,19 @@ public abstract class Piece {
             this.position = mov;
             movementPossibility();
             scacchiera.lastMove = mov;
+            this.movement++;
         }else{
             System.out.println("fail... ");
-
+            System.out.println("valore inserito " + mov);
+            System.out.println("valori possibili " );
+            list.forEach(el ->System.out.println(el));
+            System.out.println("il bot è rincoglionito ");
         }
 
         
     }
 
+    /* deprecato
     public List<String> checkPosibily(List<String> heros ){
        
         List<String> movKingSave = List.copyOf(movementPossibility());
@@ -83,30 +89,24 @@ public abstract class Piece {
 
         return movKingSave;
     }
+    */
 
+    /*
+     * control of the check king
+     */
     public boolean isKing(){
         boolean result = this.tipe.equals("king")? true:false;
 
             if (result) {
                 System.out.println("this king is in check " + this.position + " save him" ); 
-                check(identify);
+                check();
             }
 
         return result;
     }
 
 
-    public Square SearcSquare(String identify, Square[][] table){
-        for (int i = 0; i < table.length; i++) {
-            for (int j = 0; j < table[i].length; j++) {
-                if (table[i][j].getIdentify().equals(identify)) {
-                    return table[i][j];
-                }
-            }
-        }
-        return null;
-    }
-
+    //only pedestrian use this method
     public void ghost(String direction){
         String[] posistionArray = position.split(""); 
         int vertical = Integer.parseInt(posistionArray[0]);
@@ -155,16 +155,34 @@ public abstract class Piece {
     }
     
 
-
-    abstract List<String> movementPossibility();
-
     // getter and setter
+
+    public void saveMov(List<String> p){
+        this.kingPointer = new ArrayList<>();
+        kingPointer.addAll(p);
+    }
+
+    public List<String> getKingPointer(){
+        return this.kingPointer;
+    }
+
+    public String getIdentify(){
+        return identify;
+    }
+
+    public String getIposition(){
+        return position;
+    }
+
+    public boolean getColor(){
+        return color;
+    }
 
     public boolean getCheck(){
         return this.check;
     }
 
-    private void check(String last){
+    private void check(){
         this.check = !this.check;
     }
 

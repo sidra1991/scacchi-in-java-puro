@@ -2,14 +2,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Horse extends Piece{
-    public Horse(boolean color,String position,Chessboard ches){
-        super("horse",color? "HW":"HB",position,color,ches);
+    public Horse(boolean color,String position,Chessboard ches,King king){
+        super("horse",color? "HW":"HB",position,color,ches,king);
 
     }
 
 
     @Override
-    List<String> movementPossibility() {
+    public List<String> movementPossibility() {
         List<String> possibility=new ArrayList<String>();
 
         String[] posistionArray = position.split(""); 
@@ -24,7 +24,9 @@ public class Horse extends Piece{
             }
         }
         
-        
+        List<String> DirectionControl = new ArrayList<String>();
+
+        //all direction move vertical and orizontal
         int[] arraySupportVertical = {2,1,-1,-2,-2,-1,+1,+2};
         int[] arraySupportOrizontal = {1,+2,+2,1,-1,-2,-2,-1};
         
@@ -32,14 +34,15 @@ public class Horse extends Piece{
         for (int i = 0; i < arraySupportOrizontal.length; i++) {
             int var1 =vertical + arraySupportVertical[i];
             int var2 =orInt + arraySupportOrizontal[i];
-            String letter = chessboard.getOrizontalLocationLetter(var2);
+            
 
-        if ( var1>0&& var1<9&& var2>0&& var2<9 ){
-
+        if ( var1 >= 1&& var1 <= 8&& var2 >= 1&& var2 <= 8 ){
+                String letter = chessboard.getOrizontalLocationLetter(var2);
                 Square squ = chessboard.SearcSquare(var1+letter);
                 if (squ.pieceEsist() && !(squ.getPiece().getColor() == this.color)) {
                     if (squ.getPiece().isKing()) {
-                    //    squ.getPiece().check();
+                        DirectionControl.add(position);
+                        squ.getPiece().saveMov(DirectionControl);
                     }
                     possibility.add(var1 + letter);
 
@@ -50,6 +53,22 @@ public class Horse extends Piece{
             }
 
         }
+
+        return possibility;
+    }
+
+    @Override
+    public List<String> saveKing() {
+        List<String> possibility =new ArrayList<>();
+        List<String> allPoss =  movementPossibility();
+        
+        allPoss.forEach(el-> {
+                if( this.king.getKingPointer()!=null){
+                    this.king.getKingPointer().contains(el);
+                    possibility.add(el);  
+                }
+            }
+        );
 
         return possibility;
     }

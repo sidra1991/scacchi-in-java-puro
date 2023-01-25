@@ -5,14 +5,14 @@ public class King extends Piece{
     private Tower tower1;
     private Tower tower2;
 
-    public King(boolean color,String position,Tower tower1,Tower tower2,Chessboard ches){
-        super("king",color? "KW":"KB",position,color,ches);
-        this.tower1 = tower1;
-        this.tower2 = tower2;
+    public King(boolean color,String position,Chessboard ches){
+        super("king",color? "KW":"KB",position,color,ches,null);
+
+        
     }
     
     @Override
-    List<String> movementPossibility() {
+    public List<String> movementPossibility() {
 
 
         List<String> possibility=new ArrayList<String>();
@@ -84,31 +84,30 @@ public class King extends Piece{
      */
 
     public String[] castlingPossibility(){
-        Square[][] table = chessboard.getSquares();
         String[] possibility = {"",""};
 
         if (!tower1.getIposition().equals("") && tower1.getMovement() == 0 ) {
             
             if (color) {
                 if (
-                    SearcSquare("8B", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("8B", table).pieceEsist() &&
-                    SearcSquare("8C", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("8C", table).pieceEsist()&&
-                    SearcSquare("8D", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("8D", table).pieceEsist()) 
+                    chessboard.SearcSquare("8B").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("8B").pieceEsist() &&
+                    chessboard.SearcSquare("8C").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("8C").pieceEsist()&&
+                    chessboard.SearcSquare("8D").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("8D").pieceEsist()) 
                 {
                     possibility[0] = "LC"; 
                 }
 
             } else {
                 if (
-                    SearcSquare("1C", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("1C", table).pieceEsist() &&
-                    SearcSquare("1D", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("1D", table).pieceEsist()&&
-                    SearcSquare("1B", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("1B", table).pieceEsist())
+                    chessboard.SearcSquare("1C").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("1C").pieceEsist() &&
+                    chessboard.SearcSquare("1D").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("1D").pieceEsist()&&
+                    chessboard.SearcSquare("1B").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("1B").pieceEsist())
                 {
                     possibility[0] = "LC"; 
                 }
@@ -120,20 +119,20 @@ public class King extends Piece{
         if (!tower2.getIposition().equals("") && tower2.getMovement() == 0) {
             if (color) {
                 if (
-                    SearcSquare("8F", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("8F", table).pieceEsist()&&
-                    SearcSquare("8G", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("8G", table).pieceEsist()) 
+                    chessboard.SearcSquare("8F").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("8F").pieceEsist()&&
+                    chessboard.SearcSquare("8G").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("8G").pieceEsist()) 
                 {
                     possibility[1] = "RC"; 
                 }
 
             } else {
                 if (
-                    SearcSquare("1F", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("1F", table).pieceEsist()&&
-                    SearcSquare("1G", table).getPointerEnemy(color) == 0 &&
-                    !SearcSquare("1G", table).pieceEsist()) 
+                    chessboard.SearcSquare("1F").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("1F").pieceEsist()&&
+                    chessboard.SearcSquare("1G").getPointerEnemy(color) == 0 &&
+                    !chessboard.SearcSquare("1G").pieceEsist()) 
                 {
                     possibility[1] = "RC"; 
                 }
@@ -204,6 +203,20 @@ public class King extends Piece{
         movementPossibility().forEach(el -> saveKing.add(el));
 
         return saveKing;
+    }
+
+    @Override
+    public List<String> saveKing() {
+        List<String> text = movementPossibility();
+        return text;
+    }
+
+    public void setTover1(Tower tower){
+        this.tower1 = tower;
+    }
+
+    public void setTover2(Tower tower){
+        this.tower2 = tower;
     }
 
 }

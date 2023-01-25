@@ -3,19 +3,20 @@ import java.util.List;
 
 public class Tower extends Piece {
 
-    public Tower(boolean color,String position,Chessboard ches){
-        super("tower",color? "TW":"TB",position,color,ches);
+    public Tower(boolean color,String position,Chessboard ches,King king){
+        super("tower",color? "TW":"TB",position,color,ches,king);
 
     }
 
     @Override
-    List<String> movementPossibility(Square[][] table) {
+    public List<String> movementPossibility() {
         List<String> possibility=new ArrayList<String>();
 
         String[] posistionArray = position.split(""); 
         int vertical = Integer.parseInt(posistionArray[0]);
         String orizzontal = posistionArray[1];
         int orizzontalInt = 0;
+        List<String> DirectionControl = new ArrayList<String>();
 
         for (int i = 0; i < orizontalLocation.length; i++) {
             if (orizontalLocation[i].equals(orizzontal)) {
@@ -24,84 +25,79 @@ public class Tower extends Piece {
             }
         }
 
-        /*
-         * value for control the moove of tower
-         * var[0] is number for the square in table
-         * var[1] is param for true or false 1 is true and the if can run, 0 is false and stop relative if
-         */
-        int[] up ={1,1};
-        int[] below ={1,1};
-        int[] left = {1,1};
-        int[] right ={1,1};
+        //movement support
+        int[] moveSistem ={
+            //up
+            1,
+            //right
+            1,
+            //below
+            -1,
+            //left
+            -1
+        };
 
-        for (int i = 0; i < 9; i++) {
-            if (up[1] == 0 && below[1] == 0 && left[1] == 0 && right[1] == 0) {
-                break;
+        for (int i = 0; i < moveSistem.length;) {
+            //vertical
+            int var1 = i <= 1? moveSistem[i]:0;
+            //orizontal
+            int var2 = i > 1? moveSistem[i]:0;
+
+            boolean canMove = true;
+
+            if (vertical + var1 < 9 && vertical + var1 > 0 && orizzontalInt + var2 < 9 && orizzontalInt + var2 > 0) {
+                String letter =  orizontalLocation[orizzontalInt+var2];
+                int verti = vertical + var1;
+                Square squ = chessboard.SearcSquare(verti+letter);
+
+                if (!squ.pieceEsist()) {
+                    possibility.add(verti+letter);
+                    DirectionControl.add(squ.getIdentify());
+                }else if(squ.getPiece().color != this.color){
+                    if (squ.getPiece().isKing()) {
+                        DirectionControl.add(position);
+                        squ.getPiece().saveMov(DirectionControl);
+                    }
+                    
+                    possibility.add(verti+letter);
+                    canMove = !canMove;
+                }else{
+                    canMove = !canMove;
+                }
+            }else{
+                canMove = !canMove;
             }
 
-            if (up[1] == 1 && vertical + up[0] < 9 ) {
-                if (!table[vertical + up[0]][orizzontalInt].pieceEsist()) {
-                    possibility.add((vertical + up[0]) + orizontalLocation[orizzontalInt]);
-                }else if(table[vertical + up[0]][orizzontalInt].getPiece().color != this.color){
-                    if (table[vertical + up[0]][orizzontalInt].getPiece().isKing("")) {
-                    //    table[vertical + up[0]][orizzontalInt].getPiece().check();
-                    }
-                    possibility.add((vertical + up[0]) + orizontalLocation[orizzontalInt]);
-                    up[1] = 0;
-                }else{
-                    up[1] = 0;
-                }
-            } 
 
-            if (below[1] == 1 && vertical - below[0] > 0 ) {
-                if (!table[vertical - below[0]][orizzontalInt].pieceEsist()) {
-                    possibility.add((vertical - below[0]) + orizontalLocation[orizzontalInt]);
-                }else if(table[vertical - below[0]][orizzontalInt].getPiece().color != this.color){
-                    if (table[vertical - below[0]][orizzontalInt].getPiece().isKing("")) {
-                       // table[vertical - below[0]][orizzontalInt].getPiece().check();
-                    }
-                    possibility.add((vertical - below[0]) + orizontalLocation[orizzontalInt]);
-                    below[1] = 0;
-                }else{
-                    below[1] = 0;
-                }
-            } 
+            if (!canMove) {
+                i++;
+            }else{
 
-            if (right[1] == 1 && orizzontalInt + right[0] < 9 ) {
-                if (!table[vertical][orizzontalInt + right[0]].pieceEsist()) {
-                    possibility.add(vertical + orizontalLocation[orizzontalInt + right[0]]);
-                }else if(table[vertical][orizzontalInt + right[0]].getPiece().color != this.color){
-                    if (table[vertical][orizzontalInt+right[0]].getPiece().isKing("")) {
-                     //   table[vertical][orizzontalInt+right[0]].getPiece().check();
-                    }
-                    possibility.add(vertical + orizontalLocation[orizzontalInt + right[0]]);
-                    right[1] = 0;
+                if(i <= 1){
+                    moveSistem[i] = var1 > 0? moveSistem[i] + 1:moveSistem[i]-1;
                 }else{
-                    right[1] = 0;
+                    moveSistem[i] = var2 > 0? moveSistem[i] + 1:moveSistem[i]-1;
                 }
-            } 
-
-            if (left[1] == 1 && orizzontalInt - left[0] > 0 ) {
-                if (!table[vertical][orizzontalInt - left[0]].pieceEsist()) {
-                    possibility.add(vertical + orizontalLocation[orizzontalInt - left[0]]);
-                }else if(table[vertical][orizzontalInt - left[0]].getPiece().color != this.color){
-                    if (table[vertical][orizzontalInt-left[0]].getPiece().isKing("")) {
-                    //    table[vertical][orizzontalInt+left[0]].getPiece().check();
-                    }
-                    possibility.add(vertical + orizontalLocation[orizzontalInt - left[0]]);
-                    left[1] = 0;
-                }else{
-                    left[1] = 0;
-                }
-            } 
-
-            up[0]++;
-            below[0]++;
-            left[0]++;
-            right[0]++;
+                 
+            }
         }
 
 
+        return possibility;
+    }
+
+    @Override
+    public List<String> saveKing() {
+        List<String> possibility =new ArrayList<>();
+        List<String> allPoss =  movementPossibility();
+        
+        allPoss.forEach(el-> {
+            if( this.king.getKingPointer()!=null){
+                this.king.getKingPointer().contains(el);
+                possibility.add(el);  
+            }
+            }
+        );
 
         return possibility;
     }

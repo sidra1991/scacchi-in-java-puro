@@ -8,13 +8,15 @@ public class Player {
     protected Scacchiera scacchiera;
     private Scanner scan;
     protected Chessboard chessboard;
+    protected King king;
 
-    public Player(boolean col,Scacchiera sca,Scanner scan,Chessboard ches){
+    public Player(boolean col,Scacchiera sca,Scanner scan,Chessboard ches,King king){
         this.color = col;
         this.scacchiera = sca;
         this.scan = scan;
         this.chessboard = ches;
         turn = 1;
+        this.king = king;
     }
 
     public void move(){
@@ -31,26 +33,37 @@ public class Player {
         Piece piece = chessboard.SearcSquare(controlInList()).getPiece();
 
 
-        List<String> pieceMuve = piece.movementPossibility(chessboard.getSquares());
+        List<String> pieceMuve = piece.movementPossibility();
 
-        System.out.println(piece.movementPossibility(chessboard.getSquares()).toString());
+        System.out.println(piece.movementPossibility().toString());
 
         System.out.println("select now ");
         piece.move(scacchiera,pieceMuve,controlmove(pieceMuve));
         turn++;
     }
 
-    public void moveCheck(List<String> posibility, String position){
+    public void moveInCheck(){
+
         chessboard.printTable();
 
-        Piece piece = chessboard.SearcSquare(position).getPiece();
-        System.out.println(posibility.toString());
+
+        List<String> movePossibility = scacchiera.getchekSistem(this.color);
+        //stamp list for piece can move
+        System.out.println(" which piece you want to move?\n pieces available:");
+                
+        movePossibility.forEach(el -> System.out.println(chessboard.SearcSquare(el).getPiece().getTipe() + " in position " + el));
+        System.out.println("\n please select the position to start now");
+        Piece piece = chessboard.SearcSquare(controlInList()).getPiece();
+
+
+        List<String> pieceMuve = piece.saveKing(king);
+
+        System.out.println(piece.saveKing(king).toString());
 
         System.out.println("select now ");
-        piece.move(scacchiera,posibility,controlmove(posibility));
+        piece.move(scacchiera,pieceMuve,controlmove(pieceMuve));
         turn++;
     }
-
 
     /*
      * check if the move is legal

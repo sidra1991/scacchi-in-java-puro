@@ -7,10 +7,12 @@ public class Chessboard {
     public Chessboard(Scacchiera scacchiera){
         this.scacchiera = scacchiera;
         generateTable();
-        lastMove = "";
-        
+
     }
 
+    /*
+     * generate all square of the table
+     */
     public void generateTable(){
         for (int i = 0; i < 9; i++) {
             int swiccer = i % 2;
@@ -96,7 +98,7 @@ public class Chessboard {
     }
 
     public String getlastMove(){
-       return scacchiera.lastMove;
+       return scacchiera.getLastMove();
     }
 
 
